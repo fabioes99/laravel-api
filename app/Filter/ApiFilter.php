@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filters;
+namespace App\Filter;
 
 use Illuminate\Http\Request;
-use App\Filters;
+use App\Filter;
 
 class ApiFilter{
     protected $allowedParams = [];
