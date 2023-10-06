@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Models\Invoice;
-use App\Http\Requests\StoreInvoiceRequest;
-use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\InvoiceResource;
 use App\Http\Resources\V1\InvoiceCollection;
 use App\Filter\V1\InvoiceFilter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use App\Http\Requests\V1\BulkStoreInvoiceRequest;
 
 class InvoiceController extends Controller
 {
@@ -39,6 +39,23 @@ class InvoiceController extends Controller
         //
     }
 
+    public function bulkStore(Request $request){
+
+        $bulk = collect($request->all())->map(function($arr, $key){
+            $renamedArr = Arr::except($arr, ['customerId', 'billedDate', 'paidDate']);
+
+            // Adicione as novas chaves com os valores correspondentes
+            $renamedArr['customer_id'] = $arr['customerId'] ?? null;
+            $renamedArr['billed_date'] = $arr['billedDate'] ?? null;
+            $renamedArr['paid_date'] = $arr['paidDate'] ?? null;
+
+            return $renamedArr;
+        });
+
+
+
+        Invoice::insert($bulk->toArray());
+    }
     /**
      * Store a newly created resource in storage.
      */
